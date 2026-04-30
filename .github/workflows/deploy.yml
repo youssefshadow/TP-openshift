@@ -20,14 +20,19 @@ jobs:
 
       - name: Login OpenShift
         run: |
-          # Utilisation de tes secrets avec la syntaxe oc login
           oc login ${{ secrets.OPENSHIFT_SERVER }} --token=${{ secrets.OPENSHIFT_TOKEN }} --insecure-skip-tls-verify
 
       - name: Start builds
         run: |
-          # On sélectionne le bon projet au cas où
+          # 1. On se place sur le bon projet
           oc project ${{ secrets.OPENSHIFT_NAMESPACE }}
 
-          # Lancement des builds binaires (comme on faisait sur ton PC)
+          # 2. On vérifie que les dossiers existent (pour le debug dans les logs)
+          ls -R docker/backend
+
+          # 3. Lancement des builds
+          echo "Démarrage du build Backend..."
           oc start-build json-server --from-dir=docker/backend --follow
+
+          echo "Démarrage du build Frontend..."
           oc start-build frontend --from-dir=. --follow
