@@ -1,32 +1,33 @@
-name: OpenShift Deploy
+name: CI/CD OpenShift
 
 on:
   push:
-    # On met les deux pour être sûr de couvrir ta branche
-    branches: [main, master]
+    branches: ["main", "master"]
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Login to OpenShift
-        uses: redhat-actions/oc-login@v1
-        with:
-          # Noms de paramètres exacts pour cette version de l'action
-          openshift_server_url: ${{ secrets.OPENSHIFT_SERVER }}
-          openshift_token: ${{ secrets.OPENSHIFT_TOKEN }}
-          namespace: ${{ secrets.OPENSHIFT_NAMESPACE }}
-          # Important : ignore l'erreur de certificat du cluster de TP
-          insecure_skip_tls_verify: true
-
-      - name: Start backend build (json-server)
+      - name: Install oc
         run: |
+          curl -LO https://mirror.openshift.com/pub/openshift-v4/clients/oc/latest/linux/oc.tar.gz
+          tar -xvf oc.tar.gz
+          sudo mv oc /usr/local/bin/
+
+      - name: Login OpenShift
+        run: |
+          # Utilisation de tes secrets avec la syntaxe oc login
+          oc login ${{ secrets.OPENSHIFT_SERVER }} --token=${{ secrets.OPENSHIFT_TOKEN }} --insecure-skip-tls-verify
+
+      - name: Start builds
+        run: |
+          # On sélectionne le bon projet au cas où
+          oc project ${{ secrets.OPENSHIFT_NAMESPACE }}
+
+          # Lancement des builds binaires (comme on faisait sur ton PC)
           oc start-build json-server --from-dir=docker/backend --follow
-
-      - name: Start frontend build (Angular)
-        run: |
           oc start-build frontend --from-dir=. --follow
