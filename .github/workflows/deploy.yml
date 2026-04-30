@@ -2,7 +2,6 @@ name: CI/CD OpenShift
 
 on:
   push:
-    # S'active sur main ou master selon votre branche par défaut
     branches: ["main", "master"]
 
 jobs:
@@ -13,7 +12,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Install OpenShift CLI (oc)
+      - name: Install OpenShift CLI
         run: |
           curl -LO https://mirror.openshift.com/pub/openshift-v4/clients/oc/latest/linux/oc.tar.gz
           tar -xvf oc.tar.gz
@@ -22,22 +21,21 @@ jobs:
 
       - name: Login to OpenShift
         run: |
-          # Utilisation des secrets avec l'argument explicite --server
           oc login --server=${{ secrets.OPENSHIFT_SERVER }} --token=${{ secrets.OPENSHIFT_TOKEN }} --insecure-skip-tls-verify
 
       - name: Start OpenShift Builds
         run: |
-          # 1. Sélection du namespace (projet)
+          # 1. Selection du projet
           oc project ${{ secrets.OPENSHIFT_NAMESPACE }}
 
-          # 2. Vérification rapide des fichiers avant envoi
-          echo "Vérification des répertoires..."
+          # 2. Verification des fichiers
+          echo "Verification du dossier backend..."
           ls -d docker/backend
 
-          # 3. Build du Backend (JSON-Server)
-          echo "Démarrage du build Backend..."
+          # 3. Build du Backend
+          echo "Demarrage build Backend"
           oc start-build json-server --from-dir=docker/backend --follow
 
-          # 4. Build du Frontend (Angular)
-          echo "Démarrage du build Frontend..."
+          # 4. Build du Frontend
+          echo "Demarrage build Frontend"
           oc start-build frontend --from-dir=. --follow
