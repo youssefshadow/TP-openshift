@@ -2,6 +2,7 @@ name: CI/CD OpenShift
 
 on:
   push:
+    # S'active sur main ou master selon votre branche par défaut
     branches: ["main", "master"]
 
 jobs:
@@ -9,30 +10,34 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Install oc
+      - name: Install OpenShift CLI (oc)
         run: |
           curl -LO https://mirror.openshift.com/pub/openshift-v4/clients/oc/latest/linux/oc.tar.gz
           tar -xvf oc.tar.gz
           sudo mv oc /usr/local/bin/
+          oc version --client
 
-      - name: Login OpenShift
+      - name: Login to OpenShift
         run: |
-          oc login ${{ secrets.OPENSHIFT_SERVER }} --token=${{ secrets.OPENSHIFT_TOKEN }} --insecure-skip-tls-verify
+          # Utilisation des secrets avec l'argument explicite --server
+          oc login --server=${{ secrets.OPENSHIFT_SERVER }} --token=${{ secrets.OPENSHIFT_TOKEN }} --insecure-skip-tls-verify
 
-      - name: Start builds
+      - name: Start OpenShift Builds
         run: |
-          # 1. On se place sur le bon projet
+          # 1. Sélection du namespace (projet)
           oc project ${{ secrets.OPENSHIFT_NAMESPACE }}
 
-          # 2. On vérifie que les dossiers existent (pour le debug dans les logs)
-          ls -R docker/backend
+          # 2. Vérification rapide des fichiers avant envoi
+          echo "Vérification des répertoires..."
+          ls -d docker/backend
 
-          # 3. Lancement des builds
+          # 3. Build du Backend (JSON-Server)
           echo "Démarrage du build Backend..."
           oc start-build json-server --from-dir=docker/backend --follow
 
+          # 4. Build du Frontend (Angular)
           echo "Démarrage du build Frontend..."
           oc start-build frontend --from-dir=. --follow
