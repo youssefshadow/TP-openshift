@@ -1,0 +1,22 @@
+apiVersion: build.openshift.io/v1
+kind: BuildConfig
+metadata:
+  name: json-server
+spec:
+  source:
+    type: Binary
+  strategy:
+    type: Docker
+    dockerStrategy:
+      # Use Dockerfile located in docker/backend when uploading the whole repo
+      dockerfilePath: docker/backend/Dockerfile
+  output:
+    to:
+      kind: ImageStreamTag
+      name: json-server:latest
+  triggers:
+    - type: ConfigChange
+    - type: ImageChange
+
+# Usage:
+# From the repo root run: `oc start-build json-server --from-dir=. --follow` to build the Dockerfile

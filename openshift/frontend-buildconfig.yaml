@@ -1,0 +1,22 @@
+apiVersion: build.openshift.io/v1
+kind: BuildConfig
+metadata:
+  name: frontend
+spec:
+  source:
+    type: Binary
+  strategy:
+    type: Docker
+    dockerStrategy:
+      # Use Dockerfile located in docker/frontend when uploading the whole repo
+      dockerfilePath: docker/frontend/Dockerfile
+  output:
+    to:
+      kind: ImageStreamTag
+      name: frontend:latest
+  triggers:
+    - type: ConfigChange
+    - type: ImageChange
+
+# Usage:
+# From the repo root run: `oc start-build frontend --from-dir=. --follow` to build the Dockerfile

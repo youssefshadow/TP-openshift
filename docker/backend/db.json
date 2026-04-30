@@ -1,0 +1,70 @@
+{
+  "cars": [
+    {
+      "id": "7ad6",
+      "marque": "Opel",
+      "modele": "Corsa",
+      "couleur": "#272626",
+      "createdBy": "admin"
+    },
+    {
+      "id": "c890",
+      "marque": "Renault",
+      "modele": "Clio",
+      "couleur": "#ea1010",
+      "createdBy": "admin"
+    },
+    {
+      "id": "4cf8",
+      "marque": "Renault",
+      "modele": "Twingo",
+      "couleur": "#52e91c",
+      "createdBy": "Joy"
+    },
+    {
+      "id": "2a53",
+      "marque": "Mercedes",
+      "modele": "A200",
+      "couleur": "#e9ec18",
+      "createdBy": "admin"
+    }
+  ],
+  "users": [
+    {
+      "id": "1",
+      "username": "admin",
+      "password": "admin123",
+      "role": "admin"
+    },
+    {
+      "id": "2",
+      "username": "user1",
+      "password": "user123",
+      "role": "user"
+    },
+    {
+      "id": "3",
+      "username": "user2",
+      "password": "user456",
+      "role": "user"
+    },
+    {
+      "id": "5900",
+      "username": "Joy",
+      "password": "joy12345",
+      "role": "admin"
+    },
+    {
+      "id": "20bc",
+      "username": "jawad",
+      "password": "jawad240122",
+      "role": "user"
+    },
+    {
+      "id": "9a62",
+      "username": "carole",
+      "password": "carolebarnac",
+      "role": "admin"
+    }
+  ]
+}

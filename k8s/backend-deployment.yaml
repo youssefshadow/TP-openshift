@@ -1,0 +1,50 @@
+# Deployment and Service for json-server backend
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: json-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: json-server
+  template:
+    metadata:
+      labels:
+        app: json-server
+    spec:
+      containers:
+        - name: json-server
+          image: <REGISTRY>/json-server:latest # replace with your image
+          ports:
+            - containerPort: 3000
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            runAsUser: 1000
+          livenessProbe:
+            httpGet:
+              path: /users
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /users
+              port: 3000
+            initialDelaySeconds: 2
+            periodSeconds: 5
+
+---
+# Service for json-server
+apiVersion: v1
+kind: Service
+metadata:
+  name: json-server
+spec:
+  selector:
+    app: json-server
+  ports:
+    - port: 3000
+      targetPort: 3000
+      protocol: TCP
