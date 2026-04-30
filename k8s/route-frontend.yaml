@@ -1,13 +1,13 @@
-# OpenShift Route to expose the frontend Service
+# Route OpenShift SANS TLS pour éviter l'erreur wrongHost
 apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
-  name: frontend-route
+  name: frontend
+  namespace: youssef-project
 spec:
   to:
     kind: Service
     name: frontend
   port:
     targetPort: 8080
-  tls:
-    termination: edge
+  # La section tls a été supprimée

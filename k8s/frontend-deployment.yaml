@@ -1,8 +1,9 @@
-# Deployment and Service for Angular frontend
+# Deployment pour le Frontend Angular
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: frontend
+  namespace: youssef-project
 spec:
   replicas: 1
   selector:
@@ -15,32 +16,32 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: <REGISTRY>/frontend:latest # replace with your image
+          # On pointe vers le registre interne où tu viens de build l'image
+          image: image-registry.openshift-image-registry.svc:5000/youssef-project/frontend:latest
           ports:
             - containerPort: 8080
           securityContext:
             allowPrivilegeEscalation: false
             runAsNonRoot: true
-            runAsUser: 101
+          # On simplifie les probes pour le premier déploiement
           livenessProbe:
             httpGet:
               path: /
               port: 8080
-            initialDelaySeconds: 10
-            periodSeconds: 20
+            initialDelaySeconds: 15
           readinessProbe:
             httpGet:
               path: /
               port: 8080
-            initialDelaySeconds: 5
-            periodSeconds: 10
+            initialDelaySeconds: 10
 
 ---
-# Service for frontend
+# Service pour exposer le frontend en interne
 apiVersion: v1
 kind: Service
 metadata:
   name: frontend
+  namespace: youssef-project
 spec:
   selector:
     app: frontend

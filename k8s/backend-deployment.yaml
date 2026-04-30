@@ -1,13 +1,13 @@
-# Deployment and Service for json-server backend
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
 metadata:
   name: json-server
 spec:
+  strategy:
+    type: Recreate
   replicas: 1
   selector:
-    matchLabels:
-      app: json-server
+    app: json-server
   template:
     metadata:
       labels:
@@ -15,36 +15,12 @@ spec:
     spec:
       containers:
         - name: json-server
-          image: <REGISTRY>/json-server:latest # replace with your image
+          image: image-registry.openshift-image-registry.svc:5000/youssef-project/json-server:latest
           ports:
             - containerPort: 3000
-          securityContext:
-            allowPrivilegeEscalation: false
-            runAsNonRoot: true
-            runAsUser: 1000
-          livenessProbe:
-            httpGet:
-              path: /users
-              port: 3000
-            initialDelaySeconds: 5
-            periodSeconds: 10
-          readinessProbe:
-            httpGet:
-              path: /users
-              port: 3000
-            initialDelaySeconds: 2
-            periodSeconds: 5
-
----
-# Service for json-server
-apiVersion: v1
-kind: Service
-metadata:
-  name: json-server
-spec:
-  selector:
-    app: json-server
-  ports:
-    - port: 3000
-      targetPort: 3000
-      protocol: TCP
+          volumeMounts:
+            - name: data-volume
+              mountPath: /data
+      volumes:
+        - name: data-volume
+          emptyDir: {}
