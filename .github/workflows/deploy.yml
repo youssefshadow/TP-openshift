@@ -2,7 +2,7 @@ name: OpenShift Deploy
 
 on:
   push:
-    # Vérifie bien si ta branche est 'main' ou 'master'
+    # On met les deux pour être sûr de couvrir ta branche
     branches: [main, master]
 
 jobs:
@@ -16,11 +16,11 @@ jobs:
       - name: Login to OpenShift
         uses: redhat-actions/oc-login@v1
         with:
-          # Correction des noms de paramètres obligatoires
+          # Noms de paramètres exacts pour cette version de l'action
           openshift_server_url: ${{ secrets.OPENSHIFT_SERVER }}
           openshift_token: ${{ secrets.OPENSHIFT_TOKEN }}
           namespace: ${{ secrets.OPENSHIFT_NAMESPACE }}
-          # Ajout indispensable pour éviter l'erreur de certificat SSL
+          # Important : ignore l'erreur de certificat du cluster de TP
           insecure_skip_tls_verify: true
 
       - name: Start backend build (json-server)
