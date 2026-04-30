@@ -1,16 +1,30 @@
+# Node and build artifacts
 node_modules
 dist
+build
+out
+
+# Angular cache / artifacts
+.angular
+.cache
+
+# Git
 .git
 .gitignore
+
+# Editor config
 .vscode
 .idea
+
+# Logs, temp, OS
 npm-debug.log
 .DS_Store
-Dockerfile* 
-docker-compose*.yml
-*.tgz
 coverage
 tmp
 temp
 uploads
-build
+
+# Docker / packaging
+*.tgz
+Dockerfile*
+docker-compose*.yml
