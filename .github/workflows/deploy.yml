@@ -1,0 +1,28 @@
+name: OpenShift Deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Login to OpenShift
+        uses: redhat-actions/oc-login@v1
+        with:
+          server: ${{ secrets.OPENSHIFT_SERVER }}
+          token: ${{ secrets.OPENSHIFT_TOKEN }}
+          namespace: ${{ secrets.OPENSHIFT_NAMESPACE }}
+
+      - name: Start backend build (json-server)
+        run: |
+          oc start-build json-server --from-dir=docker/backend --follow
+
+      - name: Start frontend build (Angular)
+        run: |
+          oc start-build frontend --from-dir=. --follow
